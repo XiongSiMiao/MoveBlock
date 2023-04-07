@@ -119,9 +119,11 @@ class GameWindow:
 
             self.update_window()
 
-def login():#登录界面
-    #输入名字
-    name = input("请输入你的名字：")
+def login():
+    #待完善
+    name = input("Enter your name: \n")
+    pwd = input("Enter your password: \n")
+    print("Welcome "+name)
 
 if __name__ == '__main__':
     login()
