@@ -1,6 +1,7 @@
 import sys
 import json
 import pygame
+# remember download this package
 import socket
 from random import randint
 
