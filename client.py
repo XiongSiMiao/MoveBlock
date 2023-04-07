@@ -18,11 +18,6 @@ class Player:
         self.color = color
         self.name = name
 
-    def draw_name(self):
-        font = pygame.font.SysFont("arial", 20)
-        text = font.render(self.name, True, (0, 0, 0))
-        text_rect = text.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
-        self.win.blit(text, text_rect)
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -92,7 +87,6 @@ class GameWindow:
 
         self.player.move()
         self.player.draw()
-        self.player.draw_name()
 
         other_players_data = json.loads(self.send_player_data())
         self.update_other_players_data(other_players_data)
@@ -113,7 +107,7 @@ class GameWindow:
     def add_one_player(self, player_id, value):
         pos = value["pos"]
         color = value["color"]
-        self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color)
+        self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color, name="Other Player")
 
     def delete_offline_players(self, data):
         new_dict = {}
