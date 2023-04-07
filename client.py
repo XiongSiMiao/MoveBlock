@@ -45,7 +45,7 @@ class GameWindow:
                              color=(randint(0, 200), randint(0, 200), randint(0, 200)))
 
         self.port = 5000
-        self.host = "10.11.32.51"
+        self.host = "192.168.8.149"
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.connect()
