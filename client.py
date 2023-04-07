@@ -13,8 +13,8 @@ class Player:
         self.dis = 3
         self.x = x
         self.y = y
-        self.width = 100
-        self.height = 100
+        self.width = 50
+        self.height = 50
         self.color = color
 
     def move(self):
@@ -110,6 +110,7 @@ class GameWindow:
 
         while True:
             clock.tick(60)
+            # 60 fps
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
