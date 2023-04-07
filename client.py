@@ -35,8 +35,8 @@ class Player:
 
 class GameWindow:
     def __init__(self):
-        self.width = 500
-        self.height = 500
+        self.width = 1200
+        self.height = 1200
         self.window = self.init_window()
 
         self.player = Player(win=self.window,
