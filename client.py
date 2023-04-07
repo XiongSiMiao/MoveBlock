@@ -7,15 +7,22 @@ from random import randint
 
 
 class Player:
-    def __init__(self, win, p_id, x, y, color):
+    def __init__(self, win, p_id, x, y, color, name):
         self.win = win
         self.id = p_id
         self.dis = 3
         self.x = x
         self.y = y
-        self.width = 50
-        self.height = 50
+        self.width = 80
+        self.height = 80
         self.color = color
+        self.name = name
+
+    def draw_name(self):
+        font = pygame.font.SysFont("arial", 20)
+        text = font.render(self.name, True, (0, 0, 0))
+        text_rect = text.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
+        self.win.blit(text, text_rect)
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -43,7 +50,8 @@ class GameWindow:
                              p_id=None,
                              x=randint(0, self.width-100),
                              y=randint(0, self.height-100),
-                             color=(randint(0, 200), randint(0, 200), randint(0, 200)))
+                             color=(randint(0, 200), randint(0, 200), randint(0, 200)),
+                             name=login())
 
         self.port = 5000
         # change to your own ip
@@ -84,6 +92,7 @@ class GameWindow:
 
         self.player.move()
         self.player.draw()
+        self.player.draw_name()
 
         other_players_data = json.loads(self.send_player_data())
         self.update_other_players_data(other_players_data)
@@ -128,12 +137,12 @@ class GameWindow:
             self.update_window()
 
 def login():
-    #待完善
+    # 这里实现登录注册功能
     name = input("Enter your name: \n")
     pwd = input("Enter your password: \n")
     print("Welcome "+name)
+    return name
 
 if __name__ == '__main__':
-    login()
     game = GameWindow()
     game.start()
