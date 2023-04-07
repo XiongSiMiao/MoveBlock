@@ -6,10 +6,7 @@ from threading import Thread
 class Server:
     def __init__(self):
         self.port = 5000
-<<<<<<< HEAD
-=======
-        # change to your own WIFI IP
->>>>>>> c1e61bb... Initial commit
+        # host change to your own ip, the same in client.py
         self.host = "192.168.8.149"
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.players_data = {}
@@ -64,5 +61,4 @@ class Server:
 if __name__ == '__main__':
     server = Server()
     server.start()
-
 
