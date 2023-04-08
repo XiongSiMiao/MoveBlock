@@ -40,13 +40,14 @@ class GameWindow:
         self.width = 1200
         self.height = 800
         self.window = self.init_window()
+        self.username , self.password = login()
 
         self.player = Player(win=self.window,
                              p_id=None,
                              x=randint(0, self.width-100),
                              y=randint(0, self.height-100),
                              color=(randint(0, 200), randint(0, 200), randint(0, 200)),
-                             name=login())
+                             name=self.username)
 
         self.port = 5000
         # change to your own ip
@@ -77,7 +78,9 @@ class GameWindow:
         data = {
             "id": self.player.id,
             "pos": [self.player.x, self.player.y],
-            "color": self.player.color
+            "color": self.player.color,
+            "name": self.player.name,
+            "pwd": self.password,
         }
         self.sock.send(json.dumps(data).encode("utf-8"))
         return self.sock.recv(2048).decode("utf-8")
@@ -134,8 +137,7 @@ def login():
     # 这里实现登录注册功能
     name = input("Enter your name: \n")
     pwd = input("Enter your password: \n")
-    print("Welcome "+name)
-    return name
+    return name, pwd
 
 if __name__ == '__main__':
     game = GameWindow()

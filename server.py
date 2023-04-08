@@ -56,7 +56,12 @@ class Server:
         key = data["id"]
         pos = data["pos"]
         color = data["color"]
-        self.players_data[key] = {"pos": pos, "color": color}
+        name = data["name"]
+        pwd = data["pwd"]
+        if name == "admin" and pwd == "admin":
+            self.players_data[key] = {"pos": pos, "color": color}
+        else:
+            print(f"User {name} tried to connect, but failed")
 
     def get_other_players_data(self, current_player_id):
         data = {}
