@@ -33,6 +33,10 @@ class Player:
 
     def draw(self):
         pygame.draw.rect(self.win, self.color, (self.x, self.y, self.width, self.height))
+        font = pygame.font.SysFont(None, 20)
+        text = font.render(self.name, True, (0, 0, 0))
+        text_rect = text.get_rect(center=(self.x+self.width/2, self.y+self.height/2))
+        self.win.blit(text, text_rect)
 
 
 class GameWindow:
@@ -110,7 +114,7 @@ class GameWindow:
     def add_one_player(self, player_id, value):
         pos = value["pos"]
         color = value["color"]
-        self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color, name="Other Player")
+        self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color, name=value["name"])
 
     def delete_offline_players(self, data):
         new_dict = {}
