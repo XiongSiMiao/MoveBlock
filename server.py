@@ -26,12 +26,12 @@ class Server:
     def get_socket_ready(self):
         self.sock.bind((self.host, self.port))
         self.sock.listen()
-        print("服务器已准备接收客户端连接")
+        print("The server is ready to accept client connections")
 
     def handle_connection(self):
         while True:
             conn, addr = self.sock.accept()
-            print(f"接收到来自{addr}的连接")
+            print(f"Received connection from {addr}")
             conn.send(str(id(conn)).encode("utf-8"))
             Thread(target=self.handle_message, args=(conn, )).start()
 
@@ -40,7 +40,7 @@ class Server:
             try:
                 data = conn.recv(2048)
                 if not data:
-                    print("未接收到数据，关闭连接")
+                    print("No data received, close the connection")
                     self.players_data.pop(str(id(conn)))
                     conn.close()
                     break
