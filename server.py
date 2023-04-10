@@ -1,11 +1,15 @@
 import json
 import socket
+from freeport import FreePort
 from threading import Thread
 
 
 class Server:
     def __init__(self):
-        self.port = 5000
+        self.port = FreePort(start=4000, stop=6000).port
+        # to get a free port, fixed bug of port = 5000 may be occupied
+        print(self.port)
+
         # host change to your own ip, the same in client.py
         def get_host_ip():
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -15,6 +19,7 @@ class Server:
             finally:
                 s.close()
             return ip
+
         self.host = get_host_ip()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.players_data = {}
@@ -33,7 +38,7 @@ class Server:
             conn, addr = self.sock.accept()
             print(f"Received connection from {addr}")
             conn.send(str(id(conn)).encode("utf-8"))
-            Thread(target=self.handle_message, args=(conn, )).start()
+            Thread(target=self.handle_message, args=(conn,)).start()
 
     def handle_message(self, conn):
         while True:
@@ -71,4 +76,3 @@ class Server:
 if __name__ == '__main__':
     server = Server()
     server.start()
-
