@@ -62,11 +62,14 @@ class Server:
                 break
 
     def validate_user(self, username, password):
-        # 在这里添加用户名和密码验证的逻辑，例如：
-        # 可以将用户名和密码与预先设置的值进行比较，或者查询数据库进行验证
-        if username == "admin" and password == "123456":
-            return True
-        else:
+        try:
+            with open("username.txt", "r") as f:
+                for line in f:
+                    if username == line.split()[0] and password == line.split()[1]:
+                        return True
+                return False
+        except FileNotFoundError:
+            print("username.txt文件不存在")
             return False
 
     def update_one_player_data(self, data):
