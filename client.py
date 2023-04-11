@@ -3,6 +3,8 @@ import json
 import pygame
 # remember download this package
 import socket
+import tkinter as tk
+import tkinter.messagebox
 from random import randint
 
 
@@ -17,7 +19,6 @@ class Player:
         self.height = 80
         self.color = color
         self.name = name
-
 
     def move(self):
         keys = pygame.key.get_pressed()
@@ -35,25 +36,26 @@ class Player:
         pygame.draw.rect(self.win, self.color, (self.x, self.y, self.width, self.height))
         font = pygame.font.SysFont(None, 20)
         text = font.render(self.name, True, (0, 0, 0))
-        text_rect = text.get_rect(center=(self.x+self.width/2, self.y+self.height/2))
+        text_rect = text.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
         self.win.blit(text, text_rect)
 
 
 class GameWindow:
-    def __init__(self):
+    def __init__(self, Name, Password):
         self.width = 1200
         self.height = 800
         self.window = self.init_window()
-        self.username , self.password = login()
+        self.username, self.password = Name, Password
 
         self.player = Player(win=self.window,
                              p_id=None,
-                             x=randint(0, self.width-100),
-                             y=randint(0, self.height-100),
+                             x=randint(0, self.width - 100),
+                             y=randint(0, self.height - 100),
                              color=(randint(0, 200), randint(0, 200), randint(0, 200)),
                              name=self.username)
 
         self.port = 5000
+
         # change to your own ip
         def get_host_ip():
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -63,6 +65,7 @@ class GameWindow:
             finally:
                 s.close()
             return ip
+
         self.host = get_host_ip()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -137,12 +140,84 @@ class GameWindow:
 
             self.update_window()
 
-def login():
-    # 这里实现登录注册功能
-    name = input("Enter your name: \n")
-    pwd = input("Enter your password: \n")
-    return name, pwd
+
+def Login():
+    # 创建应用程序窗口
+    root = tkinter.Tk()
+    # 设置窗口标题
+    root.title('Login Window')
+    varName = tkinter.StringVar()
+    varName.set('')
+    varPwd = tkinter.StringVar()
+    varPwd.set('')
+    # 创建标签
+    labelName = tkinter.Label(root, text='Username:', justify=tkinter.RIGHT, width=80)
+    # 将标签放到窗口上
+    labelName.place(x=10, y=5, width=80, height=20)
+    # 创建文本框，同时设置关联的变量
+    entryName = tkinter.Entry(root, width=80, textvariable=varName)
+    entryName.place(x=100, y=5, width=80, height=20)
+
+    labelPwd = tkinter.Label(root, text='Password:', justify=tkinter.RIGHT, width=80)
+    labelPwd.place(x=10, y=30, width=80, height=20)
+    # 创建密码文本框
+    entryPwd = tkinter.Entry(root, show='*', width=80, textvariable=varPwd)
+    entryPwd.place(x=100, y=30, width=80, height=20)
+
+    def login():
+        # 获取用户名和密码
+        name = entryName.get()
+        pwd = entryPwd.get()
+        if is_logined(name, pwd):
+            root.destroy()
+            game = GameWindow(name, pwd)
+            game.start()
+        else:
+            tkinter.messagebox.showerror('MoveBlock', message='Wrong username or password!')
+
+    def is_logined(name, pwd):
+        # 向server发送用户名和密码
+        # 接收server返回的信息
+        def connect():
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((host, port))
+            return sock
+
+        def get_host():
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                s.connect(('8.8.8.8', 80))
+                ip = s.getsockname()[0]
+            finally:
+                s.close()
+            return ip
+
+        host = get_host()
+        port = 5000
+        sock = connect()
+        data = {
+            "name": name,
+            "pwd": pwd,
+        }
+        sock.send(json.dumps(data).encode("utf-8"))
+        result = sock.recv(2048).decode("utf-8")
+        return result != "wrong username or password"
+
+    # 创建按钮组件，同时设置按钮事件处理函数
+    buttonOk = tkinter.Button(root, text='Login', command=login)
+    buttonOk.place(x=30, y=70, width=50, height=20)
+
+    def cancel():
+        # 清空用户输入的用户名和密码
+        varName.set('')
+        varPwd.set('')
+
+    buttonCancel = tkinter.Button(root, text='Cancel', command=cancel)
+    buttonCancel.place(x=90, y=70, width=50, height=20)
+
+    # 启动消息循环
+    root.mainloop()
+
 
 if __name__ == '__main__':
-    game = GameWindow()
-    game.start()
+    Login()
