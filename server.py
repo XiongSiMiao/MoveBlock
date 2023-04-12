@@ -53,7 +53,7 @@ class Server:
                     data = json.loads(data.decode("utf-8"))
                     name = data["name"]  # 提取用户名
                     pwd = data["pwd"]  # 提取密码
-                    if self.validate_user(name, pwd) or self.register_user(name,pwd):  # 验证用户名和密码
+                    if self.validate_user(name, pwd):  # 验证用户名和密码
                         self.update_one_player_data(data)
                         conn.sendall(json.dumps(self.get_other_players_data(data["id"])).encode("utf-8"))
                     else:
@@ -65,23 +65,7 @@ class Server:
             except Exception as e:
                 print(repr(e))
                 break
-    def register_user(self, username, password):
-        # 注册用户，写入username.txt
-        # 检查username是否存在，如果存在，返回False
-        # 如果不存在，写入username.txt，返回True
-        try:
-            with open("username.txt", "r") as f:
-                for line in f:
-                    if username == line.split()[0]:
-                        return False
-            with open("username.txt", "a") as f:
-                f.write(username + " " + base64.b64encode(password.encode('utf-8')).decode('utf-8'))
-                # 对pwd进行base64编码。
-                f.write("\n")
-            return True
-        except FileNotFoundError:
-            print("username.txt文件不存在")
-            return False
+
 
     def validate_user(self, username, password):
         try:

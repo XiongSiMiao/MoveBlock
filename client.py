@@ -221,13 +221,106 @@ def Login():
     root.mainloop()
 
 
+def add_user():
+    # 向server发送用户名和密码
+    # 接收server返回的信息
+    # 创建应用程序窗口
+    root = tkinter.Tk()
+    # 设置窗口标题
+    root.title('Register')
+    varName = tkinter.StringVar()
+    varName.set('')
+    varPwd = tkinter.StringVar()
+    varPwd.set('')
+    # 创建标签
+    labelName = tkinter.Label(root, text='Username:', justify=tkinter.RIGHT, width=80)
+    # 将标签放到窗口上
+    labelName.place(x=10, y=5, width=80, height=20)
+    # 创建文本框，同时设置关联的变量
+    entryName = tkinter.Entry(root, width=80, textvariable=varName)
+    entryName.place(x=100, y=5, width=80, height=20)
+
+    labelPwd = tkinter.Label(root, text='Password:', justify=tkinter.RIGHT, width=80)
+    labelPwd.place(x=10, y=30, width=80, height=20)
+    # 创建密码文本框
+    entryPwd = tkinter.Entry(root, show='*', width=80, textvariable=varPwd)
+    entryPwd.place(x=100, y=30, width=80, height=20)
+
+    def register():
+        # 获取用户名和密码
+        name = entryName.get()
+        pwd = entryPwd.get()
+        if is_registered(name, pwd):
+            tkinter.messagebox.showerror('MoveBlock', message='Username already exists!')
+        else:
+            tkinter.messagebox.showerror('MoveBlock',
+                                         message='Successfully registered!\nPlease restart the game and log in')
+            root.destroy()
+
+    def is_registered(name, pwd):
+        # 向server发送用户名和密码
+        # 接收server返回的信息
+        return False
+
+    buttonOk = tkinter.Button(root, text='sign up', command=register)
+    buttonOk.place(x=30, y=70, width=50, height=20)
+
+    def cancel():
+        # 清空用户输入的用户名和密码
+        varName.set('')
+        varPwd.set('')
+
+    buttonCancel = tkinter.Button(root, text='Cancel', command=cancel)
+    buttonCancel.place(x=90, y=70, width=50, height=20)
+
+    # 启动消息循环
+    root.mainloop()
+
+
+def invite_code():
+    # 创建应用程序窗口
+    root = tkinter.Tk()
+    # 设置窗口标题
+    root.title('Invite Code')
+    varCode = tkinter.StringVar()
+    varCode.set('')
+    # 创建标签
+    labelCode = tkinter.Label(root, text='Invited code:', justify=tkinter.RIGHT, width=80)
+    # 将标签放到窗口上
+    labelCode.place(x=10, y=5, width=80, height=20)
+    # 创建文本框，同时设置关联的变量
+    entryCode = tkinter.Entry(root, width=80, textvariable=varCode)
+    entryCode.place(x=100, y=5, width=80, height=20)
+
+    def check():
+        # 获取用户名和密码
+        code = entryCode.get()
+        if code == "3334":
+            tkinter.messagebox.showerror('MoveBlock', message='Welcome!\nPlease register.')
+            root.destroy()
+            return True
+        else:
+            tkinter.messagebox.showerror('MoveBlock', message='Wrong code!\nPlease try again.')
+
+    buttonOk = tkinter.Button(root, text='sign up', command=check)
+    buttonOk.place(x=30, y=70, width=50, height=20)
+
+    def cancel():
+        # 清空用户输入的用户名和密码
+        varCode.set('')
+
+    buttonCancel = tkinter.Button(root, text='Cancel', command=cancel)
+    buttonCancel.place(x=90, y=70, width=50, height=20)
+    # 启动消息循环
+    root.mainloop()
+
+
 if __name__ == '__main__':
-    account=input("Do you have an account? (y/n)")
-    if account=="y":
+    account = input("Do you have an account? (y/n)")
+    if account == "y":
         Login()
     else:
-        isInvited=input("If not, please enter the invitation code:")
-        if isInvited=="comp3334gp52":
-            Login()
-        else:
-            print("Wrong code.\nSorry, we only accept invitated users.")
+        invite_code()
+        print("Welcome to MoveBlock!\n The vistor account is 'visitor' and password is '123456'\n You can now login.")
+        ''''# 向数据库添加用户信息
+        add_user()'''
