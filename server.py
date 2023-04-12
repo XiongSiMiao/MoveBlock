@@ -65,12 +65,6 @@ class Server:
             except Exception as e:
                 print(repr(e))
                 break
-
-    def encrypt(s):
-        return base64.b64encode(s.encode('utf-8')).decode('utf-8')
-
-    def decrypt(s):
-        return base64.b64decode(s.encode('utf-8')).decode('utf-8')
     def register_user(self, username, password):
         # 注册用户，写入username.txt
         # 检查username是否存在，如果存在，返回False
@@ -81,7 +75,7 @@ class Server:
                     if username == line.split()[0]:
                         return False
             with open("username.txt", "a") as f:
-                f.write(username + " " + self.encrypt(password))
+                f.write(username + " " + base64.b64encode(password.encode('utf-8')).decode('utf-8'))
                 # 对pwd进行base64编码。
                 f.write("\n")
             return True
@@ -93,7 +87,7 @@ class Server:
         try:
             with open("username.txt", "r") as f:
                 for line in f:
-                    if username == line.split()[0] and password == self.decrypt(line.split()[1]):
+                    if username == line.split()[0] and password == base64.b64decode(line.split()[1].encode('utf-8')).decode('utf-8'):
                     # 对pwd进行base64解码。
                         return True
                 return False
