@@ -1,6 +1,7 @@
 import json
 import socket
 from threading import Thread
+import base64
 
 
 class Server:
@@ -56,16 +57,20 @@ class Server:
                         self.update_one_player_data(data)
                         conn.sendall(json.dumps(self.get_other_players_data(data["id"])).encode("utf-8"))
                     else:
-                        conn.sendall("wrong username or password".encode("utf-8"))  # 发送错误信息
+                        # 验证失败，返回False
+                        conn.sendall(json.dumps(False).encode("utf-8"))
+                        # 关闭连接
+                        conn.close()
+                        break
             except Exception as e:
                 print(repr(e))
                 break
-
     def validate_user(self, username, password):
         try:
             with open("username.txt", "r") as f:
                 for line in f:
-                    if username == line.split()[0] and password == line.split()[1]:
+                    if username == line.split()[0] and password == base64.b64decode(line.split()[1].encode('utf-8')).decode('utf-8'):
+                    # 对pwd进行base64解码。
                         return True
                 return False
         except FileNotFoundError:

@@ -1,5 +1,6 @@
 import sys
 import json
+import hashlib
 import pygame
 # remember download this package
 import socket
@@ -195,13 +196,14 @@ def Login():
         host = get_host()
         port = 5000
         sock = connect()
+        pwd = hashlib.md5(pwd.encode("utf-8")).hexdigest()  # 使用md5加密传输
         data = {
             "name": name,
             "pwd": pwd,
         }
         sock.send(json.dumps(data).encode("utf-8"))
         result = sock.recv(2048).decode("utf-8")
-        return result != "wrong username or password"
+        return result != False
 
     # 创建按钮组件，同时设置按钮事件处理函数
     buttonOk = tkinter.Button(root, text='Login', command=login)
