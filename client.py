@@ -146,7 +146,7 @@ def Login():
     # 创建应用程序窗口
     root = tkinter.Tk()
     # 设置窗口标题
-    root.title('Login Window')
+    root.title('Login (Register)')
     varName = tkinter.StringVar()
     varName.set('')
     varPwd = tkinter.StringVar()
@@ -222,4 +222,12 @@ def Login():
 
 
 if __name__ == '__main__':
-    Login()
+    account=input("Do you have an account? (y/n)")
+    if account=="y":
+        Login()
+    else:
+        isInvited=input("If not, please enter the invitation code:")
+        if isInvited=="comp3334gp52":
+            Login()
+        else:
+            print("Wrong code.\nSorry, we only accept invitated users.")
