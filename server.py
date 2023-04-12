@@ -65,11 +65,18 @@ class Server:
             except Exception as e:
                 print(repr(e))
                 break
+
+    def encode(s):
+        return base64.b64encode(s.encode('utf-8')).decode('utf-8')
+
+    def decode(s):
+        return base64.b64decode(s.encode('utf-8')).decode('utf-8')
+
     def validate_user(self, username, password):
         try:
             with open("username.txt", "r") as f:
                 for line in f:
-                    if username == line.split()[0] and password == base64.b64decode(line.split()[1].encode('utf-8')).decode('utf-8'):
+                    if username == line.split()[0] and password == self.encode(line.split()[1]):
                     # 对pwd进行base64解码。
                         return True
                 return False
