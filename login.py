@@ -1,12 +1,14 @@
 import tkinter as tk
 import requests
 
-def start():
+registered_name = ""
 
+def start():
     SERVER_URL = 'http://localhost:8080'  # 服务器端URL
 
 
     def register():
+        global registered_name
         username = entry_username.get()
         password = entry_password.get()
 
@@ -14,12 +16,14 @@ def start():
         response = requests.post(f'{SERVER_URL}/register', json={'username': username, 'password': password})
         if response.status_code == 200:
             label_result.config(text='注册成功', fg='green')
+            registered_name = username
             root.destroy()
         else:
             label_result.config(text='注册失败', fg='red')
 
 
     def login():
+        global registered_name
         username = entry_username.get()
         password = entry_password.get()
 
@@ -27,6 +31,7 @@ def start():
         response = requests.post(f'{SERVER_URL}/login', json={'username': username, 'password': password})
         if response.status_code == 200:
             label_result.config(text='登录成功', fg='green')
+            registered_name = username
             root.destroy()
         else:
             label_result.config(text='登录失败', fg='red')

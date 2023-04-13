@@ -146,6 +146,6 @@ class GameWindow:
 
 
 if __name__ == '__main__':
-    start=login.start()
-    game = GameWindow("test","111" )
+    login.start()
+    game = GameWindow(login.registered_name,"NoMeaningPWD")
     game.start()
