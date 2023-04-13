@@ -1,7 +1,6 @@
 import json
 import socket
 from threading import Thread
-import base64
 
 
 class Server:
@@ -36,10 +35,6 @@ class Server:
             conn.send(str(id(conn)).encode("utf-8"))
             Thread(target=self.handle_message, args=(conn, )).start()
 
-
-
-
-
     def handle_message(self, conn):
         while True:
             try:
@@ -51,33 +46,13 @@ class Server:
                     break
                 else:
                     data = json.loads(data.decode("utf-8"))
-                    name = data["name"]  # 提取用户名
-                    pwd = data["pwd"]  # 提取密码
-                    if self.validate_user(name, pwd):  # 验证用户名和密码
-                        self.update_one_player_data(data)
-                        conn.sendall(json.dumps(self.get_other_players_data(data["id"])).encode("utf-8"))
-                    else:
-                        # 验证失败，返回False
-                        conn.sendall(json.dumps(False).encode("utf-8"))
-                        # 关闭连接
-                        conn.close()
-                        break
+                    self.update_one_player_data(data)
+                    conn.sendall(json.dumps(self.get_other_players_data(data["id"])).encode("utf-8"))
             except Exception as e:
                 print(repr(e))
                 break
 
 
-    def validate_user(self, username, password):
-        try:
-            with open("username.txt", "r") as f:
-                for line in f:
-                    if username == line.split()[0] and password == base64.b64decode(line.split()[1].encode('utf-8')).decode('utf-8'):
-                    # 对pwd进行base64解码。
-                        return True
-                return False
-        except FileNotFoundError:
-            print("username.txt文件不存在")
-            return False
 
     def update_one_player_data(self, data):
         key = data["id"]
