@@ -25,13 +25,13 @@ class Player:
     def move(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] and self.x - self.dis > 0:
             self.x -= self.dis
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT] and self.x + self.dis < self.win.get_width() - self.width:
             self.x += self.dis
-        elif keys[pygame.K_UP]:
+        elif keys[pygame.K_UP] and self.y - self.dis > 0:
             self.y -= self.dis
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_DOWN] and self.y + self.dis < self.win.get_height() - self.height:
             self.y += self.dis
 
     def draw(self):
