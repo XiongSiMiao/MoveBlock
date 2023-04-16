@@ -1,11 +1,10 @@
 from flask import Flask, request, jsonify
 import hashlib
 import json
+import secrets
 
 app = Flask(__name__)
 
-# 加密盐值
-SALT = 'COMP3334_GP52'
 
 
 @app.route('/register', methods=['POST'])
@@ -15,15 +14,17 @@ def register():
     username = data.get('username')
     password = data.get('password')
 
+    salt = generate_salt()
+
     # 加密密码
-    hashed_password = hash_password(password)
+    hashed_password = hash_password(password,salt)
 
     # 检查用户名是否已经存在
     if is_username_exists(username):
         return jsonify({'message': '用户名已存在'}), 400
 
     # 注册用户
-    user = {'username': username, 'password': hashed_password}
+    user = {'username': username, 'password': hashed_password, 'salt': salt}
     write_user_to_file(user)
     return jsonify({'message': '注册成功'}), 200
 
@@ -35,21 +36,25 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    # 加密密码
-    hashed_password = hash_password(password)
+    # 获取用户信息
+    user = get_user_from_file(username)
 
-    # 检查用户名和密码是否匹配
-    if is_username_exists(username):
-        user = get_user_from_file(username)
+    if user is not None:
+        hashed_password = hash_password(password,user['salt'])
         if user['password'] == hashed_password:
             return jsonify({'message': '登录成功'}), 200
 
     return jsonify({'message': '用户名或密码错误'}), 401
 
+def generate_salt():
+    """生成加密盐值"""
+    salt = secrets.token_hex(16)
+    return salt
 
-def hash_password(password):
+
+def hash_password(password,salt):
     """对密码进行加盐哈希处理"""
-    salted_password = SALT + password
+    salted_password = salt + password
     hashed_password = hashlib.sha256(salted_password.encode()).hexdigest()
     return hashed_password
 
@@ -82,3 +87,4 @@ def get_user_from_file(username):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
+
