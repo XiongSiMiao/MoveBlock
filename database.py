@@ -5,7 +5,7 @@ import json
 app = Flask(__name__)
 
 # 加密盐值
-SALT = 'my_salt'
+SALT = 'COMP3334_GP52'
 
 
 @app.route('/register', methods=['POST'])
