@@ -22,18 +22,6 @@ class Player:
         self.color = color
         self.name = name
 
-    def move(self):
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT] and self.x - self.dis > 0:
-            self.x -= self.dis
-        elif keys[pygame.K_RIGHT] and self.x + self.dis < self.win.get_width() - self.width:
-            self.x += self.dis
-        elif keys[pygame.K_UP] and self.y - self.dis > 0:
-            self.y -= self.dis
-        elif keys[pygame.K_DOWN] and self.y + self.dis < self.win.get_height() - self.height:
-            self.y += self.dis
-
     def draw(self):
         pygame.draw.rect(self.win, self.color, (self.x, self.y, self.width, self.height))
         font = pygame.font.SysFont(None, 20)
@@ -41,7 +29,63 @@ class Player:
         text_rect = text.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
         self.win.blit(text, text_rect)
 
+    def get_position(self):
+        return [self.x, self.y]
+    
 
+ class Message:
+    def __init__(self, win, text = "Can you see this message?"):
+        self.win = win
+        self.x = 0
+        self.y = 0
+        self.width = 200
+        self.height = 200
+        self.text = text
+
+    def pass_message(self, message):
+        self.text = message
+
+    def draw(self):
+        front = pygame.font.SysFont(None, 30)
+        text = front.render(self.text, True, (0, 0, 0), (255, 255, 0))
+        text_rect = text.get_rect()
+        self.win.blit(text, text_rect)
+        
+
+class Input:
+    def __init__(self, win):
+        self.win = win
+        self.x = 0
+        self.y = 770
+        self.width = 700
+        self.height = 35
+        self.color = (255, 255, 0)
+        self.message = ""
+        self.state = True
+        
+    def input_message(self):
+        root = tk.Tk()
+        root.title("Input Box")
+        root.geometry ("400x200")
+        enter_message = tk.Entry(root)
+        enter_message.pack()
+        btn1 = tk.Button(root)
+        btn1["text"] = "Send"
+        btn1.pack()
+        
+        def test(e):
+            self.message = enter_message.get()
+            messagebox.showinfo("Feedback", "Successfully send!")
+            root.destroy()  # 关闭窗口
+            
+        btn1.bind("<Button-1>", test)  # 将按钮和方法进行绑定，也就是创建了一个事件
+    
+        root.mainloop()
+        
+    def get_message(self):
+        return self.message
+    
+    
 class GameWindow:
     def __init__(self, Name, Password):
         self.width = 1200
@@ -55,7 +99,9 @@ class GameWindow:
                              y=randint(0, self.height - 100),
                              color=(randint(0, 200), randint(0, 200), randint(0, 200)),
                              name=self.username)
-
+        
+        self.message = Message(win = self.window, text = self.username + ":" )   #00000000000000
+        self.input = Input(win = self.window)
         self.port = 5000
 
         # change to your own ip
@@ -97,9 +143,25 @@ class GameWindow:
     def update_window(self):
         self.window.fill((255, 255, 255))
 
-        self.player.move()
-        self.player.draw()
+        keys = pygame.key.get_pressed()
+        if keys[K_LEFT] and self.player.x - self.player.dis > 0:
+            self.player.x -= self.player.dis
 
+        elif keys[K_RIGHT] and self.player.x + self.player.dis < self.player.win.get_width() - self.player.width:
+            self.player.x += self.player.dis
+
+        elif keys[K_UP] and self.player.y - self.player.dis > 0:
+            self.player.y -= self.player.dis
+
+        elif keys[K_DOWN] and self.player.y + self.player.dis < self.player.win.get_height() - self.player.height:
+            self.player.y += self.player.dis
+
+        elif keys[K_RETURN]:
+            self.input.input_message()
+
+        self.player.draw()
+        self.message.pass_message(self.username + ":" + self.input.get_message())
+        self.message.draw()
         other_players_data = json.loads(self.send_player_data())
         self.update_other_players_data(other_players_data)
         self.delete_offline_players(other_players_data)
@@ -141,9 +203,6 @@ class GameWindow:
                     sys.exit()
 
             self.update_window()
-
-
-
 
 if __name__ == '__main__':
     login.start()
